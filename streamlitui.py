@@ -8,10 +8,16 @@ from dotenv import load_dotenv  # Import python-dotenv
 load_dotenv()
 
 # ✅ Step 1: Configure API Key 
-API_KEY = os.getenv("API_KEY")  # Get the API key from the environment variable
+import os
+import streamlit as st
+
+# Fetch the API key from Streamlit secrets
+API_KEY = st.secrets["API_KEY"]
+
 if not API_KEY:
-    st.error("API Key is missing. Please check your .env file.")
+    st.error("API Key is missing. Please check your Streamlit secrets.")
     st.stop()
+
 
 genai.configure(api_key=API_KEY) 
 
