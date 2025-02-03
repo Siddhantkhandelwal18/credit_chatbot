@@ -2,9 +2,17 @@ import streamlit as st
 import google.generativeai as genai
 import base64
 import os
+from dotenv import load_dotenv  # Import python-dotenv
+
+# Load environment variables from the .env file
+load_dotenv()
 
 # ✅ Step 1: Configure API Key 
-API_KEY = "AIzaSyBDlhVmzMWdAEHYBo9pIJ_faRudvZ3FAyc"  # 🔹 Replace with your actual API Key 
+API_KEY = os.getenv("API_KEY")  # Get the API key from the environment variable
+if not API_KEY:
+    st.error("API Key is missing. Please check your .env file.")
+    st.stop()
+
 genai.configure(api_key=API_KEY) 
 
 # ✅ Step 2: Load the Credit Policy Markdown file 
