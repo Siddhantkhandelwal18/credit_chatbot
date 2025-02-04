@@ -276,7 +276,7 @@ def main():
                 st.session_state.logged_in = True
                 st.session_state.user_name = name
                 st.session_state.user_emp_id = emp_id
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Please enter both Name and Employee ID")
         
@@ -299,13 +299,13 @@ def main():
             # Clear Chat History
             if st.button("🔄 Reset Conversation"):
                 st.session_state.messages = []
-                st.experimental_rerun()
+                st.rerun()
 
             # Logout Button
             if st.button("📤 Logout"):
                 st.session_state.logged_in = False
                 st.session_state.messages = []
-                st.experimental_rerun()
+                st.rerun()
 
         # Load credit policy
         credit_policy_text = load_credit_policy("Credit_Policy2.md")
