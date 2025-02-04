@@ -41,46 +41,65 @@ def load_login_css():
         <style>
         .login-container {
             max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: rgba(30, 30, 30, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            margin: 100px auto;
+            padding: 30px;
+            background-color: rgba(30, 30, 30, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(187, 134, 252, 0.3);
         }
         .login-header {
             text-align: center;
             color: #BB86FC;
             margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 600;
         }
         .login-input {
             background-color: #2C2C2C;
             color: white;
             border: 1px solid #BB86FC;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 15px;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            width: 100%;
         }
         .login-button {
             background-color: #BB86FC;
             color: black;
             border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
+            border-radius: 8px;
+            padding: 12px 24px;
             cursor: pointer;
             width: 100%;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .login-button:hover {
+            background-color: #9965DD;
         }
         .company-logo {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            max-width: 150px;
+            display: block;
+            margin: 20px auto;
+            max-width: 180px;
+            position: relative;
         }
         .main-title {
             text-align: center;
             color: #BB86FC;
-            font-size: 2.5em;
-            margin: 20px 0;
-            padding-top: 20px;
+            font-size: 2.2em;
+            margin: 15px 0;
+            padding-top: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .main-page-logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            max-width: 150px;
+            z-index: 1000;
+        }
+        .stApp {
+            background-color: #121212;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -247,20 +266,17 @@ def main():
     load_css()
     load_login_css()
 
-    # Session state for login
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
 
-    # Display logo
-    st.image("msfincap.png", width=200)
-
-    # Display main title
-    st.markdown("<h1 class='main-title'>🏦 MS FINCAP YOUR FINANCIAL NAVIGATOR</h1>", unsafe_allow_html=True)
-
     if not st.session_state.logged_in:
-        # Login page
+        # Login page with centered logo
+        col1, col2, col3 = st.columns([1,2,1])
+        with col2:
+            st.image("msfincap.png", width=180, use_column_width=True)
+            
         st.markdown("<div class='login-container'>", unsafe_allow_html=True)
-        st.markdown("<h2 class='login-header'>Login</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 class='login-header'>Welcome to MS FINCAP</h2>", unsafe_allow_html=True)
         
         name = st.text_input("Name", key="login_name")
         emp_id = st.text_input("Employee ID", key="login_emp_id")
@@ -277,6 +293,13 @@ def main():
         
         st.markdown("</div>", unsafe_allow_html=True)
     else:
+        # Main page with fixed logo position
+        st.markdown("""
+            <div class="main-page-logo">
+                <img src="msfincap.png" style="max-width: 150px;">
+            </div>
+        """, unsafe_allow_html=True)
+        
         # Try to set background
         set_background("background.png")
 
