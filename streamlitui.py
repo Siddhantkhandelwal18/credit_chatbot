@@ -209,7 +209,7 @@ def login_page():
         <div class='top-bar'>
             <img src='data:image/png;base64,{0}' class='company-logo' alt='Company Logo'>
         </div>
-    """.format(get_base64_logo() if os.path.exists("company_logo.png") else ""), unsafe_allow_html=True)
+    """.format(get_base64_logo() if os.path.exists("msfincap.png") else ""), unsafe_allow_html=True)
     
     # Login container
     st.markdown("<div class='login-container'>", unsafe_allow_html=True)
