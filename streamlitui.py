@@ -5,6 +5,8 @@ import os
 from dotenv import load_dotenv
 import pandas as pd
 from datetime import datetime
+import gspread
+from google.oauth2.service_account import Credentials
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -18,22 +20,45 @@ if not API_KEY:
 
 genai.configure(api_key=API_KEY)
 
-# Function to load or create login records
-def load_login_records():
-    if os.path.exists('login_records.xlsx'):
-        return pd.read_excel('login_records.xlsx')
-    return pd.DataFrame(columns=['Name', 'Employee_ID', 'Login_Time'])
+# Google Sheets Authentication
+def authenticate_google_sheets():
+    """Authenticate with Google Sheets using service account credentials."""
+    credentials = Credentials.from_service_account_info(
+        st.secrets["google_service_account"], scopes=["https://www.googleapis.com/auth/spreadsheets"]
+    )
+    client = gspread.authorize(credentials)
+    return client
 
-# Function to save login records
+# Function to get or create the Google Spreadsheet for login records
+def get_or_create_spreadsheet(client):
+    """Get or create the Google Spreadsheet to store login records."""
+    try:
+        spreadsheet = client.open("Chatbot Login Records")  # Modify the name if needed
+    except gspread.exceptions.SpreadsheetNotFound:
+        spreadsheet = client.create("Chatbot Login Records")
+    return spreadsheet
+
+# Function to load login records from Google Sheets
+def load_login_records():
+    """Load login records from the Google Spreadsheet."""
+    client = authenticate_google_sheets()
+    spreadsheet = get_or_create_spreadsheet(client)
+    worksheet = spreadsheet.sheet1
+    try:
+        data = worksheet.get_all_records()
+        df = pd.DataFrame(data)
+    except gspread.exceptions.APIError:
+        df = pd.DataFrame(columns=['Name', 'Employee_ID', 'Login_Time'])
+    return df
+
+# Function to save login record into Google Spreadsheet
 def save_login_record(name, emp_id):
-    df = load_login_records()
-    new_record = pd.DataFrame({
-        'Name': [name],
-        'Employee_ID': [emp_id],
-        'Login_Time': [datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
-    })
-    df = pd.concat([df, new_record], ignore_index=True)
-    df.to_excel('login_records.xlsx', index=False)
+    """Save a new login record into the Google Spreadsheet."""
+    client = authenticate_google_sheets()
+    spreadsheet = get_or_create_spreadsheet(client)
+    worksheet = spreadsheet.sheet1
+    new_record = [name, emp_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
+    worksheet.append_row(new_record)
 
 # Login page CSS
 def load_login_css():
@@ -195,7 +220,7 @@ def load_css():
     /* Input Styles */
     .stTextInput > div > div > input {
         color: var(--text-primary) !important;
-        background-color: var(--background-light) !important;
+        background-color: var(--background...
         border: 1px solid var(--text-secondary) !important;
     }
 
@@ -348,3 +373,4 @@ def main():
 # Run the Streamlit App
 if __name__ == "__main__":
     main()
+   
