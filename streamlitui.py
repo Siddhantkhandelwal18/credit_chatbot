@@ -28,6 +28,11 @@ def load_credit_policy(file_path):
             return file.read()
     return "No credit policy found. Please upload a policy document."
 
+def get_base64_logo():
+    """Convert logo image to base64 string"""
+    with open("company_logo.png", "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
 def set_background(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as image_file:
@@ -58,37 +63,102 @@ def set_background(image_path):
 
 def load_css():
     css_content = """
-    /* Dark Theme for Credit Policy Chatbot */
+    /* Colorful Theme for Credit Policy Chatbot */
     :root {
-        --background-dark: #121212;
-        --background-light: #1E1E1E;
-        --text-primary: #FFFFFF;
-        --text-secondary: #B0B0B0;
-        --accent-color: #BB86FC;
-        --user-message-bg: #2C2C2C;
-        --bot-message-bg: #1E1E1E;
+        --primary-color: #4CAF50;
+        --secondary-color: #2196F3;
+        --accent-color: #FF4081;
+        --background-color: #F5F5F5;
+        --text-primary: #333333;
+        --text-secondary: #666666;
+        --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --gradient-bg: linear-gradient(135deg, #4CAF50, #2196F3);
     }
 
     /* Login Page Styles */
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background: var(--background-color);
+    }
+
+    .top-bar {
+        background: var(--gradient-bg);
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        box-shadow: var(--box-shadow);
+    }
+
+    .company-logo {
+        width: 150px;
+        height: auto;
+        margin-right: 1rem;
+    }
+
     .login-container {
         max-width: 400px;
-        margin: 0 auto;
+        margin: 2rem auto;
         padding: 2rem;
-        background-color: var(--background-light);
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background: white;
+        border-radius: 15px;
+        box-shadow: var(--box-shadow);
+        animation: fadeIn 0.5s ease-in-out;
     }
 
     .login-title {
         text-align: center;
-        color: var(--accent-color);
+        color: var(--primary-color);
         margin-bottom: 2rem;
+        font-size: 1.8rem;
+        font-weight: bold;
     }
 
-    .company-logo {
-        display: block;
-        margin: 0 auto 2rem auto;
-        max-width: 200px;
+    /* Input Field Styles */
+    .stTextInput > div > div > input {
+        border: 2px solid #e0e0e0 !important;
+        border-radius: 8px !important;
+        padding: 0.5rem 1rem !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .stTextInput > div > div > input:focus {
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2) !important;
+    }
+
+    /* Button Styles */
+    .stButton > button {
+        background: var(--gradient-bg) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: bold !important;
+        transition: transform 0.2s ease !important;
+        width: 100% !important;
+    }
+
+    .stButton > button:hover {
+        transform: translateY(-2px) !important;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Error/Success Messages */
+    .stAlert {
+        border-radius: 8px !important;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from { transform: translateX(-10px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
     }
 
     /* Existing styles... */
@@ -131,12 +201,18 @@ def record_login(name, employee_id):
         return False
 
 def login_page():
+    # Main container
+    st.markdown("<div class='main-container'>", unsafe_allow_html=True)
+    
+    # Top bar with logo
+    st.markdown("""
+        <div class='top-bar'>
+            <img src='data:image/png;base64,{0}' class='company-logo' alt='Company Logo'>
+        </div>
+    """.format(get_base64_logo() if os.path.exists("company_logo.png") else ""), unsafe_allow_html=True)
+    
+    # Login container
     st.markdown("<div class='login-container'>", unsafe_allow_html=True)
-    
-    # Company Logo
-    if os.path.exists("company_logo.png"):
-        st.image("company_logo.png", use_column_width=True)
-    
     st.markdown("<h1 class='login-title'>Welcome to Credit Policy Navigator</h1>", unsafe_allow_html=True)
     
     # Login Form
@@ -151,7 +227,7 @@ def login_page():
                 st.session_state.authenticated = True
                 st.session_state.user_name = name
                 st.session_state.employee_id = employee_id
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Failed to record login information")
         else:
@@ -193,12 +269,12 @@ def main_chat_interface():
         # Logout Button
         if st.button("🚪 Logout"):
             st.session_state.authenticated = False
-            st.experimental_rerun()
+            st.rerun()
 
         # Clear Chat History
         if st.button("🔄 Reset Conversation"):
             st.session_state.messages = []
-            st.experimental_rerun()
+            st.rerun()
 
     # Rest of your existing chat interface code...
     # (Keep all your existing chat interface code here)
