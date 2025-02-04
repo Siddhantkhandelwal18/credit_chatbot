@@ -252,15 +252,10 @@ def main():
         st.session_state.logged_in = False
 
     # Display logo
-    st.markdown(
-        """
-        <img src="msfincap.png" class="company-logo" alt="MS FINCAP Logo">
-        """,
-        unsafe_allow_html=True
-    )
+    st.image("msfincap.png", width=200)
 
     # Display main title
-    st.markdown("<h1 class='main-title'>MS FINCAP YOUR FINANCIAL NAVIGATOR</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>🏦 MS FINCAP YOUR FINANCIAL NAVIGATOR</h1>", unsafe_allow_html=True)
 
     if not st.session_state.logged_in:
         # Login page
