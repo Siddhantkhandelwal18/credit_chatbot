@@ -65,13 +65,13 @@ def save_login_record(name, emp_id):
     worksheet = spreadsheet.sheet1
     new_record = [name, emp_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
     
-    print(f"Saving record: {new_record}")  # Debugging line
-    
     try:
         worksheet.append_row(new_record)
-        print("Record saved successfully.")  # Debugging line
+        print(f"Record saved: {new_record}")
     except Exception as e:
         print(f"Error saving record: {e}")
+
+        
 
 # Login page CSS
 def load_login_css():
