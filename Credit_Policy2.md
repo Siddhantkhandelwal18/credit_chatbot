@@ -130,5 +130,8 @@
 - **Maximum Loan-to-Value (LTV):** **50% of Market Value**  
 - **Guarantor Required** (Must be financially stable)
 
-- we donot give constructions loans
+- we do not give construction loans.
+- 
+- Loan Eligibility Policy – Minimum Income Requirement
+To be eligible for a loan with MS Fincap, applicants must have a minimum total income of ₹20,000 per month. This requirement ensures the applicant's financial stability and repayment capability.
 
