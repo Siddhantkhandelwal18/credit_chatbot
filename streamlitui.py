@@ -32,10 +32,13 @@ def authenticate_google_sheets():
 def get_or_create_spreadsheet(client):
     """Get or create the Google Spreadsheet to store login records."""
     try:
-        spreadsheet = client.open("Chatbot_Login_Records")  # Modify the name if needed
+        # Attempt to open the existing spreadsheet
+        spreadsheet = client.open("Chatbot_Login_Records")
     except gspread.exceptions.SpreadsheetNotFound:
+        # If not found, create a new spreadsheet
         spreadsheet = client.create("Chatbot_Login_Records")
     return spreadsheet
+
 
 # Function to load login records from Google Sheets
 def load_login_records():
