@@ -58,20 +58,17 @@ def load_login_records():
     return df
 
 # Function to save login record into Google Spreadsheet
-def save_login_record(name, emp_id):
+    def save_login_record(name, emp_id):
     """Save a new login record into the Google Spreadsheet."""
     client = authenticate_google_sheets()
     spreadsheet = get_or_create_spreadsheet(client)
     worksheet = spreadsheet.sheet1
-    new_record = [name, emp_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
-    
+    new_record = ["Test User", "12345", datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
+    print(f"Appending record: {new_record}")
     try:
         worksheet.append_row(new_record)
-        print(f"Record saved: {new_record}")
     except Exception as e:
         print(f"Error saving record: {e}")
-
-        
 
 # Login page CSS
 def load_login_css():
