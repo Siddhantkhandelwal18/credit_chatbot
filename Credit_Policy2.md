@@ -134,4 +134,4 @@
 - 
 - Loan Eligibility Policy – Minimum Income Requirement
 To be eligible for a loan with MS Fincap, applicants must have a minimum total income of ₹20,000 per month. This requirement ensures the applicant's financial stability and repayment capability.
-
+- less than ₹20,000 per month are not eligible.
