@@ -58,7 +58,8 @@ def load_login_records():
     return df
 
 # Function to save login record into Google Spreadsheet
-    def save_login_record(name, emp_id):
+  # Function to save login record into Google Spreadsheet
+def save_login_record(name, emp_id):
     """Save a new login record into the Google Spreadsheet."""
     client = authenticate_google_sheets()
     spreadsheet = get_or_create_spreadsheet(client)
@@ -69,6 +70,7 @@ def load_login_records():
         worksheet.append_row(new_record)
     except Exception as e:
         print(f"Error saving record: {e}")
+
 
 # Login page CSS
 def load_login_css():
