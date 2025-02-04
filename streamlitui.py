@@ -320,34 +320,25 @@ def main():
 
         # Initialize chat history
         if 'messages' not in st.session_state:
-            st.session_state.messages = [
-                {
-                    "role": "assistant",
-                    "content": f"Hello {st.session_state.user_name}! How can I assist you today?"
-                }
-            ]
-        
-        # Display chat history
-        for message in st.session_state.messages:
-            if message['role'] == 'user':
-                st.markdown(f"<div class='user-message'>{message['content']}</div>", unsafe_allow_html=True)
-            else:
-                st.markdown(f"<div class='bot-message'>{message['content']}</div>", unsafe_allow_html=True)
+            st.session_state.messages = []
 
-        # User input box
-        user_input = st.text_input("Ask your question", key="user_input", placeholder="Type your question here...")
+        # Display Chat History
+        for msg in st.session_state.messages:
+            if msg["role"] == "user":
+                st.markdown(f"<div class='user-message'>{msg['content']}</div>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"<div class='bot-message'>{msg['content']}</div>", unsafe_allow_html=True)
+
+        # User Input Box
+        user_message = st.text_input("Ask a question:", key="user_message")
 
         if st.button("Send", key="send_button"):
-            if user_input:
-                st.session_state.messages.append({"role": "user", "content": user_input})
-
-                # Get response from Gemini model
-                response = ask_gemini(user_input, credit_policy_text)
-                st.session_state.messages.append({"role": "assistant", "content": response})
-
-                # Display new response
+            if user_message:
+                st.session_state.messages.append({"role": "user", "content": user_message})
+                bot_answer = ask_gemini(user_message, credit_policy_text)
+                st.session_state.messages.append({"role": "bot", "content": bot_answer})
+                st.text_input("Your Question:", value="", key="user_message", disabled=True)
                 st.rerun()
 
-# Run the main function to start the app
 if __name__ == "__main__":
     main()
