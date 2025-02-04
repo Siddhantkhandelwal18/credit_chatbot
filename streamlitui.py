@@ -51,7 +51,9 @@ def load_login_records():
     try:
         data = worksheet.get_all_records()
         df = pd.DataFrame(data)
-    except gspread.exceptions.APIError:
+        print(f"Loaded records: {df}")  # Debugging line
+    except gspread.exceptions.APIError as e:
+        print(f"Error loading records: {e}")
         df = pd.DataFrame(columns=['Name', 'Employee_ID', 'Login_Time'])
     return df
 
@@ -62,7 +64,14 @@ def save_login_record(name, emp_id):
     spreadsheet = get_or_create_spreadsheet(client)
     worksheet = spreadsheet.sheet1
     new_record = [name, emp_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
-    worksheet.append_row(new_record)
+    
+    print(f"Saving record: {new_record}")  # Debugging line
+    
+    try:
+        worksheet.append_row(new_record)
+        print("Record saved successfully.")  # Debugging line
+    except Exception as e:
+        print(f"Error saving record: {e}")
 
 # Login page CSS
 def load_login_css():
