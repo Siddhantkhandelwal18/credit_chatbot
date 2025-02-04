@@ -1,5 +1,9 @@
 # MSME Credit Policy – MSFINCAP
 
+# Who are we
+We are Non Banking Financial Company registered with Reserve Bank of India (RBI). It was incorporated under the provisions of Companies Act, 2013.
+
+
 ## 📖 1. Preamble
 - India's financial landscape is evolving, but many areas remain **unorganized**.  
 - **MSFINCAP** aims to serve **unbanked customers** who lack access to traditional financial services.  
