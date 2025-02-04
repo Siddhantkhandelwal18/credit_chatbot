@@ -1,7 +1,7 @@
 streamlit
 google-generativeai
-langdetect
 python-dotenv
 pandas
-openpyxl
-mysql-connector
+gspread
+google-auth
+google-auth-oauthlib
