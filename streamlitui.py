@@ -2,10 +2,9 @@ import streamlit as st
 import google.generativeai as genai
 import base64
 import os
+from dotenv import load_dotenv
 import pandas as pd
 from datetime import datetime
-import mysql.connector
-from dotenv import load_dotenv
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -19,34 +18,22 @@ if not API_KEY:
 
 genai.configure(api_key=API_KEY)
 
-# MySQL database connection setup
-def get_db_connection():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="siddhant18",
-        database="Siddhant"
-    )
-
-# Function to load or create login records from the database
+# Function to load or create login records
 def load_login_records():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT Name, Employee_ID, Login_Time FROM LoginRecords")
-    records = cursor.fetchall()
-    conn.close()
-    
-    # Return the records as a DataFrame
-    return pd.DataFrame(records, columns=['Name', 'Employee_ID', 'Login_Time'])
+    if os.path.exists('login_records.xlsx'):
+        return pd.read_excel('login_records.xlsx')
+    return pd.DataFrame(columns=['Name', 'Employee_ID', 'Login_Time'])
 
-# Function to save login records into the database
+# Function to save login records
 def save_login_record(name, emp_id):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute("INSERT INTO LoginRecords (Name, Employee_ID, Login_Time) VALUES (%s, %s, %s)", (name, emp_id, timestamp))
-    conn.commit()
-    conn.close()
+    df = load_login_records()
+    new_record = pd.DataFrame({
+        'Name': [name],
+        'Employee_ID': [emp_id],
+        'Login_Time': [datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
+    })
+    df = pd.concat([df, new_record], ignore_index=True)
+    df.to_excel('login_records.xlsx', index=False)
 
 # Login page CSS
 def load_login_css():
@@ -320,25 +307,44 @@ def main():
 
         # Initialize chat history
         if 'messages' not in st.session_state:
-            st.session_state.messages = []
+            st.session_state.messages = [
+                {
+                    "role": "assistant",
+                    "content": f"Hello {st.session_state.user_name}! I'm your Credit Policy Assistant. How can I help you today?"
+                }
+            ]
 
-        # Display Chat History
-        for msg in st.session_state.messages:
-            if msg["role"] == "user":
-                st.markdown(f"<div class='user-message'>{msg['content']}</div>", unsafe_allow_html=True)
+        # Display chat messages
+        for message in st.session_state.messages:
+            if message["role"] == "user":
+                st.markdown(f"<div class='user-message'><strong>You:</strong> {message['content']}</div>", unsafe_allow_html=True)
             else:
-                st.markdown(f"<div class='bot-message'>{msg['content']}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='bot-message'><strong>Credit Policy Bot:</strong> {message['content']}</div>", unsafe_allow_html=True)
 
-        # User Input Box
-        user_message = st.text_input("Ask a question:", key="user_message")
+        # Chat input
+        user_query = st.chat_input("Ask about the credit policy...")
 
-        if st.button("Send", key="send_button"):
-            if user_message:
-                st.session_state.messages.append({"role": "user", "content": user_message})
-                bot_answer = ask_gemini(user_message, credit_policy_text)
-                st.session_state.messages.append({"role": "bot", "content": bot_answer})
-                st.text_input("Your Question:", value="", key="user_message", disabled=True)
-                st.rerun()
+        # Process user input
+        if user_query:
+            st.session_state.messages.append({"role": "user", "content": user_query})
 
+            # Adjust response based on mode
+            additional_prompt = {
+                "Concise": " Please provide a very brief and to-the-point answer.",
+                "Detailed": " Please provide a comprehensive and detailed explanation.",
+                "Standard": ""
+            }.get(mode, "")
+
+            # Generate response
+            with st.spinner("Analyzing policy..."):
+                response = ask_gemini(user_query + additional_prompt, credit_policy_text)
+
+            # Add bot response to chat history
+            st.session_state.messages.append({"role": "assistant", "content": response})
+
+            # Refresh chat
+            st.rerun()
+
+# Run the Streamlit App
 if __name__ == "__main__":
     main()
