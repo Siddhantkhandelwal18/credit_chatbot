@@ -24,7 +24,8 @@ genai.configure(api_key=API_KEY)
 def authenticate_google_sheets():
     """Authenticate with Google Sheets using service account credentials."""
     credentials = Credentials.from_service_account_info(
-        st.secrets["google_service_account"], scopes=["https://www.googleapis.com/auth/spreadsheets"]
+    st.secrets["gcp_service_account"], scopes=["https://www.googleapis.com/auth/spreadsheets"]
+)
     )
     client = gspread.authorize(credentials)
     return client
